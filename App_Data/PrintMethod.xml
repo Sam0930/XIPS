@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" standalone="yes" ?>
+<PrintMethods>
+  <PrintMethod Value="0">
+    <ID>0</ID>
+    <Method>不印</Method>   
+  </PrintMethod>
+  <PrintMethod Value="1">
+    <ID>1</ID>
+    <Method>正面</Method>
+  </PrintMethod>
+  <PrintMethod Value="2">
+    <ID>2</ID>
+    <Method>反面</Method>
+  </PrintMethod>
+  <PrintMethod Value="3">
+    <ID>3</ID>
+    <Method>雙面</Method>
+  </PrintMethod>
+</PrintMethods>

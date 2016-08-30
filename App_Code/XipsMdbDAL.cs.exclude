@@ -1,0 +1,540 @@
+﻿using System;
+using System.Data;
+using System.Data.OleDb;
+
+namespace XIPS.Data
+{
+    public class XipsMdbDAL : IDisposable
+    {
+        private bool m__isDisposed = false;
+        private string m__lastError = string.Empty;
+        private string m__db_CNNSTR = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["DATACNNSTR__OLEDB_XIPS"].ConnectionString;
+
+        public enum MainListType
+        {
+            ComposeMasterList,
+            StockLibraryList,
+            UserList,
+            UsersBriefList,
+            CustomerList
+        }
+
+        public enum ComposeSequenceMode
+        {
+            IncreaseOrder,
+            DecreaseOrder
+        }
+
+        public XipsMdbDAL()
+        {
+        }
+
+        ~XipsMdbDAL()
+        {
+            this.Dispose(false);
+        }
+
+        public string ErrorMessage
+        {
+            get
+            {
+                return (this.m__lastError);
+            }
+        }
+
+        public DataTable getDetailedList(MainListType ListType)
+        {
+            DataTable ____returnDT = new DataTable();
+            string ____sql = string.Empty;
+
+            this.m__lastError = string.Empty;
+
+            switch (ListType)
+            {
+                case MainListType.ComposeMasterList:
+                    ____sql = "SELECT T1.ComposeID AS  [項次],  T2.CustomerName AS [客戶名稱], T1.ComposeName AS [配頁名稱], T1.ComposeDepiction AS [配頁描述] " +
+                            "FROM [Compose_Master] T1 LEFT JOIN [Customer_Information] T2 ON T1.CustomerID = T2.CustomerID ORDER BY 1";
+                    break;
+                case MainListType.CustomerList:
+                    ____sql = "SELECT ( SELECT COUNT(*) FROM [Customer_Information] T2 WHERE T2.CustomerID <= T1.CustomerID) AS  [序號], " +
+                            "CustomerID AS [統一編號], CustomerName AS [客戶名稱] FROM [Customer_Information] T1 ORDER BY 2";
+                    break;
+                case MainListType.StockLibraryList:
+                    ____sql = "SELECT StockID AS [項次], StockName AS [紙張名稱], StockWidth AS [紙張寬度(mm)], " +
+                               "StockHeight AS [紙張高度(mm)], StockWeight AS [紙張重量(gsm)], IIF(StockCoated > 0, '是', '否') AS [紙張塗布] FROM [Stock_Library]";
+                    break;
+                case MainListType.UserList:
+                    ____sql = "SELECT ( SELECT COUNT(*) FROM [User_Information] T3 WHERE T3.UserID <= T1.UserID) AS  [項次], " +
+                            "T1.UserID AS [使用者代碼], T1.UserName AS [使用者名稱], T2.GroupName AS [使用者群組] " +
+                            "FROM [User_Information] T1 LEFT JOIN [Group_Information] T2 ON T1.GroupID=T2.GroupID ORDER BY 2";
+                    break;
+                case MainListType.UsersBriefList:
+                    ____sql = "SELECT UserID, UserName FROM User_Information";
+                    break;
+                default:
+                    throw new System.Exception("Invalid Enumeration Parameter - MainListType ");
+            };
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(____sql, ___oleCN))
+                    {
+                        ___oleCmd.CommandTimeout = 120;
+
+                        using (OleDbDataAdapter oleda = new OleDbDataAdapter(___oleCmd))
+                        {
+                            ____returnDT.BeginLoadData();
+                            oleda.Fill(____returnDT);
+                            ____returnDT.EndLoadData();
+                        }
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.getDetailedList] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.getDetailedList] Error : " + exp.Message;
+            };
+
+            return (____returnDT);
+        }
+
+        public DataTable UserInformation(string UserID)
+        {
+            DataTable ____returnDT = new DataTable();
+
+            this.m__lastError = string.Empty;
+            string ____sql = string.Format(
+                "SELECT T1.UserName, T1.UserPassword, T1.UserDepiction, T1.GroupID, T2.GroupName, T2.GroupDepiction " +
+                "FROM [User_Information] T1 LEFT JOIN [Group_Information] T2 ON T1.GroupID = T2.GroupID WHERE T1.UserID = '{0}'", UserID);
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(____sql, ___oleCN))
+                    {
+                        ___oleCmd.CommandTimeout = 120;
+
+                        using (OleDbDataAdapter oleda = new OleDbDataAdapter(___oleCmd))
+                        {
+                            ____returnDT.BeginLoadData();
+                            oleda.Fill(____returnDT);
+                            ____returnDT.EndLoadData();
+                        }
+                    }
+                };
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.UserInformation] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.UserInformation] Error : " + exp.Message;
+            };
+
+            return (____returnDT);
+        }
+
+        public DataTable GroupPermission(String GroupID)
+        {
+            DataTable ____returnDT = new DataTable();
+
+            this.m__lastError = string.Empty;
+            string ____sql = string.Format(
+                "SELECT T1.ProgramID, T1.Granted, T2.ProgramName, T2.ProgramDepiction " +
+                "FROM [Group_Permission] T1 LEFT JOIN [Program_List] T2 ON T1.ProgramID = T2.ProgramID WHERE T1.GroupID = '{0}'", GroupID);
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(____sql, ___oleCN))
+                    {
+                        ___oleCmd.CommandTimeout = 120;
+
+                        using (OleDbDataAdapter oleda = new OleDbDataAdapter(___oleCmd))
+                        {
+                            ____returnDT.BeginLoadData();
+                            oleda.Fill(____returnDT);
+                            ____returnDT.EndLoadData();
+                        }
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.GroupPermission] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.GroupPermission] Error : " + exp.Message;
+            };
+
+            return (____returnDT);
+        }
+
+        public DataTable JobStatisticReport(DateTime Start, DateTime End, string UserID)
+        {
+            DataTable ____returnDT = new DataTable();
+
+            this.m__lastError = string.Empty;
+            string ____sql = string.Format(
+                "SELECT T1.DatePrinted AS [列印日期/時間], T1.JobID AS [列印檔案名稱], T2.UserName AS [列印人員], T1.TotalPages AS [列印總頁數], T1.DeductPages AS [空白頁數] " +
+                "FROM [Job_Statistic] T1 LEFT JOIN [User_Information] T2 ON T1.UserID = T2.UserID " +
+                "WHERE (T1.DatePrinted >= #{0}#) AND (T1.DatePrinted <= #{1}#) AND (T1.UserID LIKE '{2}%')",
+                Start.ToString("yyyy/MM/dd 00:00:00"), End.ToString("yyyy/MM/dd 23:59:59"), UserID.Trim());
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(____sql, ___oleCN))
+                    {
+                        ___oleCmd.CommandTimeout = 300;
+
+                        using (OleDbDataAdapter oleda = new OleDbDataAdapter(___oleCmd))
+                        {
+                            ____returnDT.BeginLoadData();
+                            oleda.Fill(____returnDT);
+                            ____returnDT.EndLoadData();
+                        }
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.JobStatisticReport] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.JobStatisticReport] Error : " + exp.Message;
+            };
+
+            return (____returnDT);
+        }
+
+        public string GetLastComposeID()
+        {
+            this.m__lastError = string.Empty;
+            string ____composeid = string.Empty;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+
+                    using (OleDbCommand ___oleCmd = new OleDbCommand("SELECT TOP 1 ComposeID FROM [Compose_Master] ORDER BY ComposeID DESC", ___oleCN))
+                    {
+                        using (OleDbDataAdapter ___oleda = new OleDbDataAdapter(___oleCmd))
+                        {
+                            using (DataTable __dt = new DataTable())
+                            {
+                                ___oleda.Fill(__dt);
+                                ____composeid = __dt.Rows[0][0].ToString();
+                            }
+                        }
+                    }
+                };
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.GetLastComposeID] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.GetLastComposeID] Error : " + exp.Message;
+            };
+
+            return (____composeid);
+        }
+
+        public string GetXmlOutputPath()
+        {
+            this.m__lastError = string.Empty;
+            string ____outputpath = string.Empty;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+
+                    using (OleDbCommand ___oleCmd = new OleDbCommand("SELECT TOP 1 ParameterValue FROM [System_Parameter] WHERE ([Section] = 'XMLPath')", ___oleCN))
+                    {
+                        using (OleDbDataAdapter ___oleda = new OleDbDataAdapter(___oleCmd))
+                        {
+                            using (DataTable __dt = new DataTable())
+                            {
+                                ___oleda.Fill(__dt);
+                                ____outputpath = __dt.Rows[0][0].ToString();
+                            }
+                        }
+                    }
+                };
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.GetXmlOutputPath] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.GetXmlOutputPath] Error : " + exp.Message;
+            };
+
+            return (____outputpath);
+        }
+
+        public bool AdjustComposeItemSequence(string ComposeID, string DetailID, ComposeSequenceMode Mode)
+        {
+            this.m__lastError = string.Empty;
+            bool __myReturn = false;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+                    using (OleDbTransaction ___oleTran = ___oleCN.BeginTransaction())
+                    {
+                        using (OleDbCommand ___oleCmd = new OleDbCommand())
+                        {
+                            ___oleCmd.Connection = ___oleCN;
+                            ___oleCmd.Transaction = ___oleTran;
+
+                            try
+                            {
+                                if (Mode == ComposeSequenceMode.IncreaseOrder)
+                                {
+                                    ___oleCmd.CommandText = string.Format("UPDATE [Compose_Detail] SET [ItemSequence] =   [ItemSequence]  - 1 WHERE [DetailID] =  ( SELECT TOP 1 DetailID FROM Compose_Detail WHERE (ComposeID = {0}) AND (ItemSequence > (SELECT ItemSequence FROM Compose_Detail WHERE (DetailID = {1}))) ORDER BY ItemSequence ASC )", ComposeID, DetailID);
+                                    ___oleCmd.ExecuteNonQuery();
+                                    ___oleCmd.CommandText = string.Format("UPDATE [Compose_Detail] SET [ItemSequence] =   [ItemSequence]  + 1 WHERE ([DetailID] =  {0})", DetailID);
+                                    ___oleCmd.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    ___oleCmd.CommandText = string.Format("UPDATE [Compose_Detail] SET [ItemSequence] =   [ItemSequence]  + 1 WHERE [DetailID] =  ( SELECT TOP 1 DetailID FROM Compose_Detail WHERE (ComposeID = {0}) AND (ItemSequence < (SELECT ItemSequence FROM Compose_Detail WHERE (DetailID = {1}))) ORDER BY ItemSequence DESC)", ComposeID, DetailID);
+                                    ___oleCmd.ExecuteNonQuery();
+                                    ___oleCmd.CommandText = string.Format("UPDATE [Compose_Detail] SET [ItemSequence] =   [ItemSequence]  - 1 WHERE ([DetailID] =  {0})", DetailID);
+                                    ___oleCmd.ExecuteNonQuery();
+                                }
+                                ___oleTran.Commit();
+                                __myReturn = true;
+                            }
+                            catch (Exception __tranExp)
+                            {
+                                ___oleTran.Rollback();
+                                throw new Exception(__tranExp.Message);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.AdjustComposeItemSequence] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.AdjustComposeItemSequence] Error : " + exp.Message;
+            };
+            return (__myReturn);
+        }
+
+        public bool DeleteComposeMaster(string ComposeID)
+        {
+            this.m__lastError = string.Empty;
+            bool __myReturn = false;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+                    using (OleDbTransaction ___oleTran = ___oleCN.BeginTransaction())
+                    {
+                        using (OleDbCommand ___oleCmd = new OleDbCommand())
+                        {
+                            try
+                            {
+                                ___oleCmd.Connection = ___oleCN;
+                                ___oleCmd.Transaction = ___oleTran;
+                                ___oleCmd.CommandText = string.Format("DELETE FROM [Compose_Detail] WHERE ([ComposeID] =  {0})", ComposeID);
+                                ___oleCmd.ExecuteNonQuery();
+                                ___oleCmd.CommandText = string.Format("DELETE FROM [Compose_Master] WHERE([ComposeID] =  {0})", ComposeID);
+                                ___oleCmd.ExecuteNonQuery();
+                                ___oleTran.Commit();
+                                __myReturn = true;
+                            }
+                            catch (Exception __tranExp)
+                            {
+                                ___oleTran.Rollback();
+                                throw new Exception(__tranExp.Message);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteComposeMaster] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteComposeMaster] Error : " + exp.Message;
+            };
+            return (__myReturn);
+        }
+
+        public bool DeleteComposeDetail(string DetailID)
+        {
+            this.m__lastError = string.Empty;
+            bool __myReturn = false;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(string.Format("DELETE FROM [Compose_Detail] WHERE ([DetailID] =  {0}) ", DetailID), ___oleCN))
+                    {
+                        ___oleCmd.ExecuteNonQuery();
+                        __myReturn = true;
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteComposeDetail] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteComposeDetail] Error : " + exp.Message;
+            };
+            return (__myReturn);
+        }
+
+        public bool DeleteCustomer(string CustomerID)
+        {
+            this.m__lastError = string.Empty;
+            bool __myReturn = false;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(string.Format("DELETE FROM [Customer_Information] WHERE [CustomerID] = '{0}'", CustomerID), ___oleCN))
+                    {
+                        ___oleCmd.ExecuteNonQuery();
+                        __myReturn = true;
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteCustomer] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteCustomer] Error : " + exp.Message;
+            };
+            return (__myReturn);
+        }
+
+        public bool DeleteStockLibrary(string StockLibraryID)
+        {
+            this.m__lastError = string.Empty;
+            bool __myReturn = false;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(string.Format("DELETE FROM [Stock_Library] WHERE [StockD] = {0}", StockLibraryID), ___oleCN))
+                    {
+                        ___oleCmd.ExecuteNonQuery();
+                        __myReturn = true;
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteStockLibrary] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteStockLibrary] Error : " + exp.Message;
+            };
+            return (__myReturn);
+        }
+
+        public bool DeleteUser(string UserID)
+        {
+            this.m__lastError = string.Empty;
+            bool __myReturn = false;
+
+            try
+            {
+                using (OleDbConnection ___oleCN = new OleDbConnection(m__db_CNNSTR))
+                {
+                    ___oleCN.Open();
+                    using (OleDbCommand ___oleCmd = new OleDbCommand(string.Format(" DELETE FROM [User_Information] WHERE [UserID] =  {0}", UserID), ___oleCN))
+                    {
+                        ___oleCmd.ExecuteNonQuery();
+                        __myReturn = true;
+                    }
+                }
+            }
+            catch (OleDbException dbexp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteUser] DB.Error : " + dbexp.Message;
+            }
+            catch (Exception exp)
+            {
+                this.m__lastError = "[XipsDAL.DeleteUser] Error : " + exp.Message;
+            };
+            return (__myReturn);
+        }
+
+        #region IDisposable Member
+
+        protected void Dispose(bool disposing)
+        {
+
+            if (disposing) { }
+            this.m__isDisposed = true;
+        }
+
+        void IDisposable.Dispose()
+        {
+            this.m__isDisposed = true;
+            //
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, you should call GC.SupressFinalize to
+            // take this object off the finalization queue 
+            // and prevent finalization code for this object
+            // from executing a second time.
+            //
+            if (!this.m__isDisposed) GC.SuppressFinalize(this);
+        }
+
+        #endregion
+    }
+}

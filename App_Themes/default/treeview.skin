@@ -1,0 +1,39 @@
+﻿<asp:TreeView 
+    SkinID="TreeView_Default" 
+    runat="server" 
+    ImageSet="BulletedList4" 
+    Font-Size="10pt" 
+    ForeColor="#003399" 
+    BackColor = "White"
+    Font-Names="微軟正黑體, 標楷體"
+    ShowExpandCollapse="False">
+    <NodeStyle                                                  
+        Height="20px"                         
+        BackColor = "#D8D8D8" 
+        BorderColor="#d6d6d6" 
+        BorderStyle="Solid"
+        BorderWidth ="3px"                                   
+        NodeSpacing="2px" 
+        HorizontalPadding="3px"                                         
+        VerticalPadding="2px" 
+        Font-Size="11pt" 
+        ForeColor="Black"                                       
+        Font-Names="微軟正黑體, arial"  />                                        
+    <RootNodeStyle
+        ForeColor="#800000" BackColor="#D8D8D8" BorderColor="#CCCCCC" 
+        BorderStyle="Solid" BorderWidth="4px" />
+    <LeafNodeStyle 
+        BorderStyle="Solid" />                                          
+    <HoverNodeStyle 
+        Font-Underline="false" 
+        Font-Bold ="true" 
+        BorderColor="#d0d0d0"                                   
+        ForeColor="#ffffff" />
+    <ParentNodeStyle 
+        BackColor="#D8D8D8" BorderColor="#CCCCCC"  />
+    <SelectedNodeStyle 
+        Font-Underline="false" 
+        Font-Bold ="true" 
+        ForeColor="#ffffff" NodeSpacing="2px" BackColor="#757575" BorderColor="#656565" 
+        BorderStyle="Dotted" BorderWidth="3px" />
+</asp:TreeView>

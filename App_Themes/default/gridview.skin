@@ -1,0 +1,35 @@
+﻿<asp:GridView SkinID="gridview_default"
+    runat="server" 
+    CellPadding="4" 
+    Font-Size="10pt" 
+    AllowPaging="true" 
+    AllowSorting="true"
+    ForeColor="#333333" 
+    GridLines="Vertical" 
+    PageSize="50" 
+    BorderColor="#D1D1D1" 
+    BorderStyle="Solid" 
+    BorderWidth="2px"                        
+    EnableSortingAndPagingCallbacks="true" >
+    <AlternatingRowStyle BackColor="White" />
+    <EditRowStyle BackColor="#2461BF" BorderStyle="None" />
+    <EmptyDataRowStyle Font-Size="11pt" ForeColor="#0033CC" BorderColor="#AFBBCD" 
+        BorderStyle="Double" BorderWidth="3px" />
+    <FooterStyle BackColor="#507CD1" ForeColor="White" Font-Bold="True" 
+        Font-Italic="True" Font-Size="10pt" Font-Strikeout="True" />
+    <HeaderStyle BackColor="#507CD1" Font-Bold="False" ForeColor="#E8E8E8" 
+        Font-Size="10pt" BorderColor="#D1D1D1" BorderStyle="Solid" 
+        BorderWidth="2px" />
+    <PagerSettings Mode="NumericFirstLast" />
+    <PagerStyle ForeColor="White" HorizontalAlign="left" Font-Size="11pt" 
+        BackColor="#A1A1A1" BorderColor="#CCCFD9" BorderStyle="Solid" 
+        BorderWidth="2px" Font-Bold="True" />
+    <RowStyle BackColor="#E1E1E1" Font-Size="10pt" ForeColor="#404040" 
+        BorderColor="#D1D1D1" BorderStyle="Solid" BorderWidth="1px" HorizontalAlign="Center" />
+    <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#CC3300" 
+        Font-Italic="False" />
+    <SortedAscendingCellStyle BackColor="#F5F7FB" />
+    <SortedAscendingHeaderStyle BackColor="#6D95E1" />
+    <SortedDescendingCellStyle BackColor="#E9EBEF" />
+    <SortedDescendingHeaderStyle BackColor="#4870BE" />
+</asp:GridView>  

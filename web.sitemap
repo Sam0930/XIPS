@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  <siteMapNode url="default.aspx" title="">
+    <siteMapNode url="~/_PrintingJob/pjDefault.aspx" title="票券列印作業" />
+    <siteMapNode url="~/_JobStatistic/Report.aspx"  title="統計報表查詢"/>  
+    <siteMapNode url="~/_Compose/compDefault.aspx" title="配頁設定檔維護" />
+    <siteMapNode url="~/_StockLibrary/slDefault.aspx" title="紙張資料維護" />
+    <siteMapNode url="~/_Customer/custDefault.aspx" title="客戶資料維護" />
+    <siteMapNode url="~/_User/userDefault.aspx" title="使用者資料維護" />
+    <siteMapNode url="~/_Group/GroupPermission.aspx" title="群組權限設定" />
+  </siteMapNode>
+</siteMap>

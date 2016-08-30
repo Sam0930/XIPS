@@ -1,0 +1,282 @@
+﻿<%@ Master 
+    Language="C#" 
+    AutoEventWireup="true" 
+    CodeFile="DefaultMaster.master.cs" 
+    Inherits="XIPS._DefaultMaster" 
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>華磁票券配頁系統管理程式</title>
+    <link href="Styles/StyleSheet.css" rel="stylesheet" type="text/css" />
+
+    <asp:placeholder runat="server">
+        <script src='<%: ResolveUrl("~/scripts/jquery-1.10.2.min.js") %>' type="text/javascript"></script>
+	</asp:placeholder>
+
+    <script language="javascript" type="text/javascript">
+        // Fallback to loading jQuery from a local path if the CDN is unavailable
+        // if (typeof jQuery == 'undefined') 
+        !window.jQuery && document.write(unescape("%3Cscript src='http://code.jquery.com/jquery-latest.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>    
+    <asp:ContentPlaceHolder id="HeaderContent" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body> <%--style="background-image: url('../images/CMP.png'); background-repeat: no-repeat; background-position: center;">--%>
+    <form id="form1" runat="server" > 
+    <ajaxToolkit:ToolkitScriptManager 
+        runat="Server" 
+        AsyncPostBackTimeout="6000"
+        EnableScriptGlobalization="true"
+        EnableScriptLocalization="true" 
+        ID="ToolkitScriptManager_Masterpage" 
+        ScriptMode="Debug" 
+        CombineScripts="false" /> 
+
+<%-- Form of Change User password  --%>
+    <asp:UpdatePanel ID="updatepnlChangePassword" runat="server" UpdateMode="Conditional" >
+        <ContentTemplate>
+            <asp:Panel ID="pnlChangePasswordMask" runat="server" style="opacity:0.85; filter:alpha(opacity=85); background-color: #333333; left: 0px; top: 0px; position: fixed; width: 100%;height: 100%; z-index:9998; "></asp:Panel>    
+            <asp:Panel ID="pnlChangePasswordWindow"  runat="server" style="opacity:0.85; filter:alpha(opacity=85);  position:absolute; top:50%; left:50%; margin-left:-175px; margin-top:-175px; background-color:#ffffff; border: 4px solid #cccccc; vertical-align:middle; text-align:center;  width: 350px; padding:3px;z-index:9999; ">                                  
+                <table style="width: 100%; height:100%; font-family:微軟正黑體; border: 0px solid #ffffff; ">
+                    <tr><td  colspan="2" style="background-color:#cccccc; height:2px;" ></td></tr>
+                    <tr>
+                        <td align="center" colspan="2" style="background-color:#808080; white-space:nowrap; letter-spacing:2px; padding:10px;">
+                            <asp:Label ID="Label2" runat="server" Text="變更使用者密碼" style="font-size:18px;color:White; font-weight:500;"></asp:Label></td>
+                    </tr>
+                    <tr><td  colspan="2" style="background-color:#cccccc; height:2px;" ></td></tr>
+                    <tr style="height:25px;">
+                        <td style="font-family:Arial;font-size:14px; text-align:right;  white-space:nowrap">
+                            <asp:RequiredFieldValidator ID="OrgPasswordRequired" runat="server" 
+                                ControlToValidate="txtOrgPassword" ErrorMessage="請輸入原始密碼." SetFocusOnError="true"
+                                Font-Names="Arial" Font-Size="22px" ForeColor="Red" Font-Bold="true"
+                                ToolTip="請輸入原始密碼." ValidationGroup="ChangeUserPassword" Text="*"></asp:RequiredFieldValidator>&nbsp;&nbsp;                    
+                                <asp:Label ID="lblOrgPassword" runat="server" AssociatedControlID="txtOrgPassword">原始密碼 : &nbsp;</asp:Label>
+                        </td>
+                        <td style="height:25px; text-align:left; white-space:nowrap">
+                            <asp:TextBox Width="150px" ID="txtOrgPassword" runat="server" Font-Names="Arial" Font-Size="12px" MaxLength="25" TextMode="Password"></asp:TextBox>
+                            <ajaxToolkit:FilteredTextBoxExtender 
+                                ID="FilteredTextBoxExtender1" 
+                                runat="server" 
+                                FilterMode="ValidChars" 
+                                FilterType="UppercaseLetters, LowercaseLetters, Numbers, Custom" 
+                                ValidChars="+-=_&#*()|,.;:"
+                                TargetControlID="txtOrgPassword" />      
+                        </td>
+                    </tr>
+                    <tr style="height:25px;">
+                        <td style="font-family:Arial;font-size:14px; text-align:right;  white-space:nowrap">
+                            <asp:RequiredFieldValidator ID="NewPasswordRequired" runat="server" 
+                                ControlToValidate="txtNewPassword" ErrorMessage="請輸入變更後的新密碼." SetFocusOnError="true"
+                                Font-Names="Arial" Font-Size="22px" ForeColor="Red" Font-Bold="true"
+                                ToolTip="請輸入變更後的新密碼." ValidationGroup="ChangeUserPassword" Text="*"></asp:RequiredFieldValidator>&nbsp;&nbsp;
+                            <asp:Label ID="lblNewpassword" runat="server" AssociatedControlID="txtNewPassword">變更密碼 : &nbsp;</asp:Label>
+                        </td>
+                        <td style="height:25px; text-align:left; white-space:nowrap">
+                            <asp:TextBox Width="150px" ID="txtNewPassword" runat="server" Font-Names="Arial" Font-Size="12px" TextMode="Password" MaxLength="25"></asp:TextBox>   
+                              <ajaxToolkit:FilteredTextBoxExtender 
+                                ID="FilteredTextBoxExtender2" 
+                                runat="server" 
+                                FilterMode="ValidChars" 
+                                FilterType="UppercaseLetters, LowercaseLetters, Numbers, Custom" 
+                                ValidChars="+-=_&#*()|,.;:"
+                                TargetControlID="txtNewPassword" />                                     
+                        </td>
+                    </tr>
+                    <tr style="height:25px;">
+                        <td style="font-family:Arial;font-size:14px; text-align:right;  white-space:nowrap">
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
+                                ControlToValidate="txtNewPasswordConfirm" ErrorMessage="請再輸入變更後的新密碼" SetFocusOnError="true"
+                                Font-Names="Arial" Font-Size="22px" ForeColor="Red"
+                                ToolTip="請再輸入變更後的新密碼." ValidationGroup="ChangeUserPassword" >*</asp:RequiredFieldValidator>
+                            <asp:CompareValidator ID="CompareValidator1" runat="server" 
+                                ErrorMessage="新密碼輸入錯誤." ControlToCompare="txtNewPassword" 
+                                ControlToValidate="txtNewPasswordConfirm" SetFocusOnError="True" Font-Names="Arial" Font-Size="22px" ForeColor="Red" Text="*" 
+                                ValidationGroup="ChangeUserPassword"></asp:CompareValidator>&nbsp;&nbsp;
+                            <asp:Label ID="lblNewpasswordConfirm" runat="server" AssociatedControlID="txtNewPasswordConfirm">確認密碼 : &nbsp;</asp:Label>
+                        </td>
+                        <td style="height:25px; text-align:left; white-space:nowrap">
+                            <asp:TextBox Width="150px" ID="txtNewPasswordConfirm" runat="server" Font-Names="Arial" Font-Size="12px" TextMode="Password" MaxLength="25"></asp:TextBox>            
+                             <ajaxToolkit:FilteredTextBoxExtender 
+                                ID="FilteredTextBoxExtender3" 
+                                runat="server" 
+                                FilterMode="ValidChars" 
+                                FilterType="UppercaseLetters, LowercaseLetters, Numbers, Custom" 
+                                ValidChars="+-=_&#*()|,.;:"
+                                TargetControlID="txtNewPasswordConfirm" />                           
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="2" style="color:#ff3300; font-size:10pt;font-weight:500; padding:10px 2px 8px 2px; font-family:微軟正黑體">
+                            <asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" ValidationGroup="ChangeUserPassword" />                            
+                             <asp:Literal ID="lblChangeFailed" runat="server" EnableViewState="False"></asp:Literal>     
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" colspan="2"   style="background-color: #cccccc; padding:10px 10px 10px 10px; font-family:Times New Roman; font-size:12pt; color:#284775">
+                            <asp:Button ID="btnChangePwd" runat="server" Font-Size="10pt"  CommandName="Change" 
+                                Text="變更密碼" ValidationGroup="ChangeUserPassword" 
+                                onclick="btnChangePwd_Click" />
+                            &nbsp;&nbsp;&nbsp;
+                            <asp:Button ID="btnCancel" runat="server" Font-Size="10pt"  CommandName="Cancel"
+                                Text="取  消" ValidationGroup="ChangeUserPassword" CausesValidation="False" 
+                                onclick="btnCancel_Click" />
+                        </td>
+                    </tr>
+
+                </table>
+            </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+    <asp:UpdateProgress ID="updateprogressChangePassword" runat="server" AssociatedUpdatePanelID="updatepnlChangePassword" DisplayAfter="1">
+        <ProgressTemplate>
+            <div id="divMaskFrame" style="opacity:0.50; filter:alpha(opacity=50); background-color: #cccccc; left: 0px; top: 0px; position: fixed; width: 100%;height: 100%; z-index:9999"></Div>                               
+        </ProgressTemplate>
+    </asp:UpdateProgress> 
+<%-- End of Form --%>
+
+    <table style="width: 100%; padding:10px;" border="0">   
+        <tr>
+            <td style="padding-bottom: 5px;">
+                <table style="width: 100%; padding:3px;">
+                    <tr>
+                        <td style="white-space:nowrap">
+                            <div id="master_headertop">
+                                <asp:HyperLink ID="HomePageLink" runat="server" NavigateUrl="~/Default.aspx" 
+                                    ToolTip="華磁票券印刷股份有限公司 - 票券配頁系統管理程式 - Home page">                                
+                                    <asp:Image runat="server" ID="HeaderImage" ImageUrl="~/images/xips-logo.jpg" style="width:38px; height:30px; border:0px; vertical-align:bottom" AlternateText="華磁票券印刷股份有限公司" />
+                                </asp:HyperLink>                                     
+                                <asp:Label ID="Label1" runat="server" Text="Label" style="font-size:16pt">票券配頁系統管理程式</asp:Label>
+                            </div>
+                        </td> 
+                        <td style="text-align:right; padding-right:1px; white-space:nowrap; width:100px; font-size:11pt">
+                            <asp:Menu ID="menuLoginInfo" runat="server" BackColor="#F7F6F3" 
+                                DynamicHorizontalOffset="2" Font-Names="Verdana" 
+                                ForeColor="#7C6F57" StaticSubMenuIndent="10px" Orientation="Horizontal"  
+                                style="text-align:right" DisappearAfter="500" RenderingMode="List" 
+                                onmenuitemclick="menuLoginInfo_MenuItemClick" ToolTip="登出票券配頁系統管理程式">
+                                <DynamicHoverStyle BackColor="#7C6F57" ForeColor="White" />
+                                <DynamicMenuItemStyle HorizontalPadding="5px" VerticalPadding="2px" />
+                                <DynamicMenuStyle BackColor="#F7F6F3" />
+                                <DynamicSelectedStyle BackColor="Silver" ForeColor="Black" />
+                                <Items>
+                                    <asp:MenuItem Text="USER" Value="USER">
+                                        <asp:MenuItem Text="變更密碼" Value="ChangePassword"></asp:MenuItem>
+                                        <asp:MenuItem Text="登出系統" Value="Logout"></asp:MenuItem>
+                                    </asp:MenuItem>
+                                </Items>
+                                <StaticHoverStyle BackColor="#7C6F57" ForeColor="White" />
+                                <StaticMenuItemStyle HorizontalPadding="5px" VerticalPadding="2px" />
+                                <StaticSelectedStyle BackColor="Silver" ForeColor="Black" />
+                            </asp:Menu>                            
+<%--                            <asp:Label ID="Label2" runat="server" Text="Label" style="font-size:11pt">登入者 : </asp:Label>
+                            <asp:Label ID="lblUserName" runat="server" Text="Label" style="font-size:11pt"> </asp:Label>--%>
+<%--                            <asp:LinkButton ID="lbtnLogout" runat="server"  ToolTip="登出票券配頁系統管理程式"
+                                style="font-size:10pt; padding-left:10px; color:#aaaaaa;font-weight:600;" 
+                                onclick="lbtnLogout_Click">[登出系統]</asp:LinkButton>--%>
+                        </td>                                                             
+                    </tr>                
+                </table>
+            </td>               
+        </tr>
+        <tr>
+            <td style="background-color: #cccccc; height:3px; font-size:10pt"></td>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td style="padding-top: 5px; vertical-align:top; white-space:nowrap; width:150px">
+                            <!-- Menu -->               
+                            <asp:Panel ID="Panel_TreeViewMenu"  runat="server" 
+                                style="padding: 1px; font-family: 'Arial Unicode MS','times New Roman'; font-size:  10pt; background-color: #ffffff; height:auto;" >
+                                <asp:TreeView ID="TreeView_Menu" skinid="TreeView_Default" runat="server" DataSourceID="WebSiteMap" >
+                                </asp:TreeView>
+<%--                                <asp:TreeView 
+                                    ID="TreeView_Menu" 
+                                    runat="server" 
+                                    ImageSet="BulletedList4" 
+                                    Font-Size="11pt" 
+                                    ForeColor="#003399" 
+                                    BackColor = "White"
+                                    DataSourceID="WebSiteMap" ShowExpandCollapse="False" Font-Names="微軟正黑體">
+                                    <NodeStyle                                                  
+                                        Height="20px"                         
+                                        BackColor = "#D8D8D8" 
+                                        BorderColor="#d6d6d6" 
+                                        BorderStyle="Solid"
+                                        BorderWidth ="4px"                                   
+                                        NodeSpacing="2px" 
+                                        HorizontalPadding="3px"                                         
+                                        VerticalPadding="2px" 
+                                        Font-Size="11pt" 
+                                        ForeColor="Black"                                       
+                                        Font-Names="微軟正黑體, arial"  />                                        
+                                    <RootNodeStyle
+                                        ForeColor="#800000" BackColor="#D8D8D8" BorderColor="#CCCCCC" 
+                                        BorderStyle="Solid" BorderWidth="5px" />
+                                    <LeafNodeStyle 
+                                        BorderStyle="Solid" />                                          
+                                    <HoverNodeStyle 
+                                        Font-Underline="false" 
+                                        Font-Bold ="true" 
+                                        BorderColor="#d0d0d0"                                   
+                                        ForeColor="#ffffff" />
+                                    <ParentNodeStyle 
+                                        BackColor="#D8D8D8" BorderColor="#CCCCCC"  />
+                                    <SelectedNodeStyle 
+                                        Font-Underline="false" 
+                                        Font-Bold ="true" 
+                                        ForeColor="#ffffff" NodeSpacing="2px" BackColor="#757575" BorderColor="#656565" 
+                                        BorderStyle="Dotted" BorderWidth="4px" />
+                                </asp:TreeView>--%>
+                            </asp:Panel>  
+                        </td>
+                        <td valign="top" style="padding-top:2px;white-space:nowrap; width:auto; ">
+                            <div id="master_contentheader">
+                                <asp:SiteMapPath ID="SiteMapPath1" 
+                                    runat="server" 
+                                    Font-Names="Arial Unicode MS" 
+                                    Font-Size="12pt" 
+                                    PathSeparator=" "
+                                    PathSeparatorStyle-Font-Bold="true" SkipLinkText="">                 
+                                    <CurrentNodeStyle ForeColor="#333333"/>
+                                    <NodeStyle Font-Bold="True" ForeColor="#990000"/>
+                                    <PathSeparatorStyle Font-Bold="True" ForeColor="#990000" />
+                                    <RootNodeStyle Font-Bold="True" ForeColor="#FF8000"  />
+                                </asp:SiteMapPath>                                
+
+                                <div style="padding-top:5px;">
+                                    <asp:ContentPlaceHolder 
+                                        id="MasterContent" 
+                                        runat="server">        
+                                    </asp:ContentPlaceHolder>
+                                </div>     
+                            </div>       
+                        </td>                   
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <!-- company logo -->
+<%--        
+        <tr>
+            <td>
+                <div id="master_contentfooter">Copyright &copy; 2013 <a href="http://www.yfy.com.tw/"> 永豐餘集團 </a> All rights reserved.</div>
+            </td>
+        </tr>
+--%>
+    </table>
+    <asp:SiteMapDataSource ID="WebSiteMap" runat="server" SiteMapProvider="WebSiteMap" ShowStartingNode="false" />
+    <ajaxToolkit:DropShadowExtender 
+        ID="DropShadowExtender_Menu" 
+        runat="server" 
+        TargetControlID="Panel_TreeViewMenu" 
+        Opacity="0.6" 
+        width="0" 
+        Radius="3" 
+        Rounded="True" />
+    </form>
+</body>
+</html>
